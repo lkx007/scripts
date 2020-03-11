@@ -26,13 +26,13 @@ services:
       strategy: recreate
       request_line: GET "/status" "HTTP/1.0"
       reinitializing_timeout: 60000
-  zookeeper:
+  mq:
     scale: 1
     start_on_create: true
     health_check:
-      response_timeout: 2000
       healthy_threshold: 2
-      port: 2181
+      response_timeout: 2000
+      port: 5672
       unhealthy_threshold: 3
       initializing_timeout: 60000
       interval: 2000
@@ -107,21 +107,9 @@ services:
     scale: 1
     start_on_create: true
     health_check:
-      response_timeout: 2000
       healthy_threshold: 2
+      response_timeout: 2000
       port: 9115
-      unhealthy_threshold: 3
-      initializing_timeout: 60000
-      interval: 2000
-      strategy: recreate
-      reinitializing_timeout: 60000
-  rabbitmq:
-    scale: 1
-    start_on_create: true
-    health_check:
-      response_timeout: 2000
-      healthy_threshold: 2
-      port: 5672
       unhealthy_threshold: 3
       initializing_timeout: 60000
       interval: 2000
@@ -145,9 +133,21 @@ services:
     scale: 1
     start_on_create: true
     health_check:
-      response_timeout: 2000
       healthy_threshold: 2
+      response_timeout: 2000
       port: 5379
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      reinitializing_timeout: 60000
+  zk:
+    scale: 1
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 2000
+      port: 2181
       unhealthy_threshold: 3
       initializing_timeout: 60000
       interval: 2000
@@ -157,8 +157,8 @@ services:
     scale: 1
     start_on_create: true
     health_check:
-      response_timeout: 2000
       healthy_threshold: 2
+      response_timeout: 2000
       port: 9100
       unhealthy_threshold: 3
       initializing_timeout: 60000
@@ -169,8 +169,8 @@ services:
     scale: 1
     start_on_create: true
     health_check:
-      response_timeout: 2000
       healthy_threshold: 2
+      response_timeout: 2000
       port: 9273
       unhealthy_threshold: 3
       initializing_timeout: 60000
@@ -244,8 +244,8 @@ services:
     scale: 1
     start_on_create: true
     health_check:
-      response_timeout: 2000
       healthy_threshold: 2
+      response_timeout: 2000
       port: 19091
       unhealthy_threshold: 3
       initializing_timeout: 60000
@@ -270,8 +270,8 @@ services:
     scale: 1
     start_on_create: true
     health_check:
-      response_timeout: 2000
       healthy_threshold: 2
+      response_timeout: 2000
       port: 9093
       unhealthy_threshold: 3
       initializing_timeout: 60000
