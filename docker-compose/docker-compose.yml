@@ -1,141 +1,117 @@
 version: '2'
 services:
   csp:
-    image: registry.bocloud.com.cn/cmp/bocloud.csp:4.3.0-RELEASE
+    image: registry.bocloud.com.cn/cmp/bocloud.csp:4.3.0-FJ-SNAPSHOT
     stdin_open: true
     volumes:
     - /home/cmp:/home/cmp/
-    - /home/cmp/config/services/csp.properties:/BeyondCMP/config/csp.properties
     - /home/cmp/logs/:/root/cmp/logs/
     tty: true
     links:
-    - prometheus:prometheus
     - redis:redis
-    - zookeeper:zookeeper
-    - mysql:mysql
-    - rabbitmq:rabbitmq
+    - mq:mq
+    - prometheus:prometheus
+    - zk:zk
     ports:
     - 18080:18080/tcp
     labels:
       io.rancher.container.pull_image: always
   css:
-    image: registry.bocloud.com.cn/cmp/bocloud.css:4.3.0-RELEASE
+    image: registry.bocloud.com.cn/cmp/bocloud.css:4.3.0-FJ-SNAPSHOT
     stdin_open: true
     volumes:
     - /home/cmp:/home/cmp/
-    - /home/cmp/config/services/css.properties:/BeyondCMP/config/css.properties
     - /home/cmp/logs/:/root/cmp/logs/
     tty: true
     links:
     - redis:redis
-    - zookeeper:zookeeper
-    - mysql:mysql
-    - rabbitmq:rabbitmq
+    - mq:mq
+    - zk:zk
     ports:
     - 18095:18095/tcp
     labels:
       io.rancher.container.pull_image: always
-  zookeeper:
-    image: zookeeper:3.5.5
+  mq:
+    image: rabbitmq:3.6.5-management
     environment:
-      ZOO_TICK_TIME: '2000'
-      ZOO_INIT_LIMIT: '10'
-      ZOO_SYNC_LIMIT: '5'
-      ZOO_AUTOPURGE_SNAPRETAINCOUNT: '3'
-      ZOO_AUTOPURGE_PURGEINTERVAL: '1'
-      ZOO_4LW_COMMANDS_WHITELIST: mntr,conf
+      RABBITMQ_DEFAULT_PASS: bocloud
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_VHOST: cmp
       TZ: Asia/Shanghai
-    stdin_open: true
-    volumes:
-    - /home/cmp/data/zookeeper/data/:/data/
-    - /home/cmp/data/zookeeper/datalog/:/datalog/
-    - /home/cmp/data/zookeeper/logs/:/logs/
-    tty: true
     ports:
-    - 2181:2181/tcp
-    labels:
-      io.rancher.container.pull_image: always
+    - 5672:5672/tcp
+    - 15672:15672/tcp
   cop:
-    image: registry.bocloud.com.cn/cmp/bocloud.cop:4.3.0-RELEASE
+    image: registry.bocloud.com.cn/cmp/bocloud.cop:4.3.0-FJ-SNAPSHOT
     stdin_open: true
     volumes:
     - /home/cmp:/home/cmp/
-    - /home/cmp/config/services/cop.properties:/BeyondCMP/config/cop.properties
     - /home/cmp/logs/:/root/cmp/logs/
     tty: true
     links:
     - redis:redis
-    - zookeeper:zookeeper
-    - mysql:mysql
-    - rabbitmq:rabbitmq
+    - mq:mq
+    - zk:zk
     ports:
     - 18090:18090/tcp
     labels:
       io.rancher.container.pull_image: always
   soc:
-    image: registry.bocloud.com.cn/cmp/bocloud.soc:4.3.0-RELEASE
+    image: registry.bocloud.com.cn/cmp/bocloud.soc:4.3.0-FJ-SNAPSHOT
     stdin_open: true
     volumes:
     - /home/cmp:/home/cmp/
-    - /home/cmp/config/services/soc.properties:/BeyondCMP/config/soc.properties
     - /home/cmp/logs/:/root/cmp/logs/
     tty: true
     links:
     - redis:redis
-    - zookeeper:zookeeper
-    - mysql:mysql
-    - rabbitmq:rabbitmq
+    - mq:mq
+    - zk:zk
     ports:
     - 18088:18088/tcp
     labels:
       io.rancher.container.pull_image: always
   cmdb:
-    image: registry.bocloud.com.cn/cmp/bocloud.cmdb:4.3.0-RELEASE
+    image: registry.bocloud.com.cn/cmp/bocloud.cmdb:4.3.0-FJ-SNAPSHOT
     stdin_open: true
     volumes:
     - /home/cmp:/home/cmp/
-    - /home/cmp/config/services/cmdb.properties:/BeyondCMP/config/cmdb.properties
     - /home/cmp/logs/:/root/cmp/logs/
     tty: true
     links:
     - redis:redis
-    - zookeeper:zookeeper
-    - mysql:mysql
-    - rabbitmq:rabbitmq
+    - mq:mq
+    - zk:zk
     ports:
     - 18082:18082/tcp
     labels:
       io.rancher.container.pull_image: always
   cos:
-    image: registry.bocloud.com.cn/cmp/bocloud.cos:4.3.0-RELEASE
+    image: registry.bocloud.com.cn/cmp/bocloud.cos:4.3.0-FJ-SNAPSHOT
     stdin_open: true
     volumes:
     - /home/cmp:/home/cmp/
-    - /home/cmp/config/services/cos.properties:/BeyondCMP/config/cos.properties
     - /home/cmp/logs/:/root/cmp/logs/
     tty: true
     links:
     - redis:redis
-    - zookeeper:zookeeper
-    - mysql:mysql
-    - rabbitmq:rabbitmq
+    - mq:mq
+    - zk:zk
     ports:
     - 18096:18096/tcp
     labels:
       io.rancher.container.pull_image: always
   cmp:
-    image: registry.bocloud.com.cn/cmp/bocloud.cmp:4.3.0-RELEASE
+    image: registry.bocloud.com.cn/cmp/bocloud.cmp:4.3.0-FJ-SNAPSHOT
     stdin_open: true
     volumes:
     - /home/cmp:/home/cmp/
-    - /home/cmp/config/services/cmp.properties:/BeyondCMP/config/cmp.properties
     - /home/cmp/logs/:/root/cmp/logs/
     tty: true
     links:
     - redis:redis
-    - zookeeper:zookeeper
-    - mysql:mysql
-    - rabbitmq:rabbitmq
+    - mq:mq
+    - zk:zk
     ports:
     - 18081:18081/tcp
     labels:
@@ -149,26 +125,15 @@ services:
     tty: true
     ports:
     - 9115:9115/tcp
-  rabbitmq:
-    image: rabbitmq:3.6.5-management
-    environment:
-      RABBITMQ_DEFAULT_PASS: bocloud
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_VHOST: cmp
-      TZ: Asia/Shanghai
-    ports:
-    - 5672:5672/tcp
-    - 15672:15672/tcp
   pontus:
-    image: registry.bocloud.com.cn/cmp/bocloud.pontus:4.3.0-RELEASE
+    image: registry.bocloud.com.cn/cmp/bocloud.pontus:4.3.0-FJ-SNAPSHOT
     stdin_open: true
     volumes:
     - /home/cmp:/home/cmp/
-    - /home/cmp/config/pontus/config.yml:/opt/pontus/pontus/config.yml
     - /home/cmp/logs/worker/:/var/log/bocloud/
     tty: true
     links:
-    - zookeeper:zookeeper
+    - zk:zookeeper
     ports:
     - 18097:18097/tcp
     labels:
@@ -192,6 +157,26 @@ services:
     - verbose
     - --appendonly
     - 'yes'
+    labels:
+      io.rancher.container.pull_image: always
+  zk:
+    image: zookeeper:3.5.5
+    environment:
+      TZ: Asia/Shanghai
+      ZOO_4LW_COMMANDS_WHITELIST: mntr,conf
+      ZOO_AUTOPURGE_PURGEINTERVAL: '1'
+      ZOO_AUTOPURGE_SNAPRETAINCOUNT: '3'
+      ZOO_INIT_LIMIT: '10'
+      ZOO_SYNC_LIMIT: '5'
+      ZOO_TICK_TIME: '2000'
+    stdin_open: true
+    volumes:
+    - /home/cmp/data/zookeeper/data/:/data/
+    - /home/cmp/data/zookeeper/datalog/:/datalog/
+    - /home/cmp/data/zookeeper/logs/:/logs/
+    tty: true
+    ports:
+    - 2181:2181/tcp
     labels:
       io.rancher.container.pull_image: always
   node-exporter:
@@ -222,47 +207,42 @@ services:
     labels:
       io.rancher.container.pull_image: always
   csc:
-    image: registry.bocloud.com.cn/cmp/bocloud.csc:4.3.0-RELEASE
+    image: registry.bocloud.com.cn/cmp/bocloud.csc:4.3.0-FJ-SNAPSHOT
     stdin_open: true
     volumes:
     - /home/cmp:/home/cmp/
-    - /home/cmp/config/services/csc.properties:/BeyondCMP/config/csc.properties
     - /home/cmp/logs/:/root/cmp/logs/
     tty: true
     links:
     - redis:redis
-    - zookeeper:zookeeper
-    - mysql:mysql
-    - rabbitmq:rabbitmq
+    - mq:mq
+    - zk:zk
     ports:
     - 18092:18092/tcp
     labels:
       io.rancher.container.pull_image: always
   exporter:
-    image: registry.bocloud.com.cn/cmp/bocloud.exporter:4.3.0-RELEASE
+    image: registry.bocloud.com.cn/cmp/bocloud.exporter:4.3.0-FJ-SNAPSHOT
     stdin_open: true
     volumes:
     - /home/cmp:/home/cmp/
-    - /home/cmp/config/services/exporter.properties:/BeyondCMP/config/exporter.properties
     - /home/cmp/logs/:/root/cmp/logs/
     tty: true
     links:
     - redis:redis
-    - zookeeper:zookeeper
-    - mysql:mysql
-    - rabbitmq:rabbitmq
+    - mq:mq
+    - zk:zk
     ports:
     - 18094:18094/tcp
     labels:
       io.rancher.container.pull_image: always
   web:
-    image: registry.bocloud.com.cn/cmp/bocloud.web:4.3.0-RELEASE
+    image: registry.bocloud.com.cn/cmp/bocloud.web:4.3.0-FJ-SNAPSHOT
     environment:
       TZ: Asia/Shanghai
     stdin_open: true
     volumes:
     - /home/cmp:/home/cmp/
-    - /home/cmp/config/web/nginx.conf:/etc/nginx/nginx.conf
     - /home/cmp/logs/nginx/:/var/log/nginx/
     tty: true
     links:
@@ -274,18 +254,17 @@ services:
     labels:
       io.rancher.container.pull_image: always
   cmc:
-    image: registry.bocloud.com.cn/cmp/bocloud.cmc:4.3.0-RELEASE
+    image: registry.bocloud.com.cn/cmp/bocloud.cmc:4.3.0-FJ-SNAPSHOT
     stdin_open: true
     volumes:
     - /home/cmp:/home/cmp/
-    - /home/cmp/config/services/cmc.properties:/BeyondCMP/config/cmc.properties
     - /home/cmp/logs/:/root/cmp/logs/
     tty: true
     links:
     - redis:redis
-    - zookeeper:zookeeper
-    - mysql:mysql
-    - rabbitmq:rabbitmq
+    - mq:mq
+    - zk:zk
+    - soc:soc
     ports:
     - 18091:18091/tcp
     labels:
@@ -293,9 +272,9 @@ services:
   mysql:
     image: mysql:8.0.17
     environment:
-      MYSQL_ROOT_PASSWORD: Cmp@v587
       MYSQL_DATABASE: cmp
       MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: Cmp@v587
       TZ: Asia/Shanghai
     stdin_open: true
     volumes:
@@ -318,9 +297,9 @@ services:
     - /etc/localtime:/etc/localtime
     tty: true
     links:
-    - blackbox-exporter:blackbox-exporter
-    - telegraf:telegraf
     - alertmanager:alertmanager
+    - telegraf:telegraf
+    - blackbox-exporter:black
     ports:
     - 19091:19091/tcp
     command:
@@ -334,18 +313,17 @@ services:
     labels:
       io.rancher.container.pull_image: always
   worker:
-    image: registry.bocloud.com.cn/cmp/bocloud.worker:4.3.0-RELEASE
+    image: registry.bocloud.com.cn/cmp/bocloud.worker:4.3.0-FJ-SNAPSHOT
     environment:
       TZ: Asia/Shanghai
     stdin_open: true
     volumes:
     - /home/cmp:/home/cmp/
-    - /home/cmp/config/worker/bocloud_worker_config.yml:/opt/worker/bocloud_worker/bocloud_worker_config.yml
     - /home/cmp/logs/worker/:/var/log/bocloud/
     tty: true
     links:
-    - zookeeper:zookeeper
-    - rabbitmq:rabbitmq
+    - mq:mq
+    - zk:zk
     ports:
     - 18089:18089/tcp
     labels:

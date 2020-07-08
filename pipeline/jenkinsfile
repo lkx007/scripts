@@ -1,0 +1,67 @@
+
+pipeline {
+    agent any
+    parameters {
+        string(name: 'branch', defaultValue: 'develop', description: 'branch name')
+        choice(name: 'service', choices: ['cbp', 'cmp', 'csc'], description: 'service name')
+        choice(name: 'port', choices: ['18091', '18092', '18093'], description: 'service port')
+        choice(name: 'version', choices: ['4.2.0-SNAPSHOT', '4.3.0-SNAPSHOT', '4.4.0-SNAPSHOT'], description: 'version')
+    }
+     tools {
+        maven 'maven-3.5' 
+    }
+    stages {
+        stage('get clone'){
+            //check CODE
+            steps {
+                echo "Clone ${service} code from gitlab. branch = {$branch}"
+                checkout([$class: 'GitSCM', branches: [[name: '*/${branch}']], 
+                    doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
+                    userRemoteConfigs: [[url: 'http://dingmw@192.168.1.25:8888/BeyondCMP/bocloud.${service}.git']]]
+                )
+            }
+        }
+    
+        stage('mvn test'){
+            //mvn 测试
+            // sh "mvn test"
+            steps {
+                sh "echo lkx ${branch} ${version} $service $port"
+            }
+        }
+    
+        stage('mvn build'){
+            //mvn构建
+            steps {
+                sh "mvn clean install -Dmaven.test.skip=true"
+                sh "/usr/bin/cp ~/docker/services/Dockerfile ~/docker/services/docker-entrypoint.sh ${WORKSPACE}"
+                sh "/usr/bin/cp ~/docker/services/config/${service}.properties ${WORKSPACE}"
+                sh "/usr/bin/cp ${WORKSPACE}/bocloud.${service}.booter/target/*.jar ."
+            }
+        }
+    
+        stage('deploy'){
+            agent {
+                dockerfile { 
+                    filename "Dockerfile" 
+                    additionalBuildArgs "--build-arg service=${service} --build-arg port=${port} --build-arg version=${version}"
+                    // label "cmp/bocloud.${service}:$version"
+                    args "-t cmp/bocloud.${service}:$version"
+                    registryUrl 'http://registry.bocloud.com.cn/'
+                    registryCredentialsId '9cbb11de-5767-4605-bca3-92bc7a88c1e5'
+                    // customWorkspace "${WORKSPACE}"
+                    dir "${WORKSPACE}"
+                }
+            }
+            steps {
+                sh "echo docker ok"
+            }
+        }
+        
+        stage('clean'){
+            steps {
+                sh "rm -f Dockerfile docker-entrypoint.sh *.properties *.jar"
+            }
+        }
+    }
+}
